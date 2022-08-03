@@ -1,7 +1,8 @@
-import React, { useState , useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Text, View, StyleSheet, Image, ScrollView, ImageBackground, TouchableOpacity, FlatList, TextInput } from "react-native"
 import colors from "../constant/colors";
 import { AuthContext } from "../Context/Auth";
+import { io } from "socket.io-client";
 import {
     useFonts,
     Poppins_100Thin,
@@ -33,10 +34,9 @@ import Inputfield from "../components/TextInput/TextInput";
 import LoginButton from "../components/button/LoginButton";
 import { useNavigation } from "@react-navigation/native";
 
-
 const Chatting = () => {
 
-    const {darkMode , customDarkMode , customLightMode} = useContext(AuthContext)
+    const { darkMode, customDarkMode, customLightMode, workspaceId } = useContext(AuthContext)
 
     let [fontsLoaded] = useFonts({
         Poppins_100Thin,
@@ -70,26 +70,26 @@ const Chatting = () => {
             img: 'https://t4.ftcdn.net/jpg/02/45/28/17/360_F_245281721_2uYVgLSFnaH9AlZ1WWpkZavIcEEGBU84.jpg',
             msg: 'Hey when`s the next meeting',
             time: 'Yesterday, 9:45 AM',
-            user_id : 1,
+            user_id: 1,
         },
         {
             id: 2,
             img: 'https://thumbs.dreamstime.com/b/businessman-icon-image-male-avatar-profile-vector-glasses-beard-hairstyle-179728610.jpg',
             msg: 'Wednesday, next okay',
-            user_id : 2,
+            user_id: 2,
 
         },
         {
             id: 3,
             img: 'https://t4.ftcdn.net/jpg/02/45/28/17/360_F_245281721_2uYVgLSFnaH9AlZ1WWpkZavIcEEGBU84.jpg',
             msg: 'Sounds perfect. I have to go through a few things, them I am ready.',
-            user_id : 2,
+            user_id: 2,
         },
         {
             id: 4,
             img: 'https://t4.ftcdn.net/jpg/02/45/28/17/360_F_245281721_2uYVgLSFnaH9AlZ1WWpkZavIcEEGBU84.jpg',
             msg: 'Sounds perfect. I have to go through a few things, them I am ready.',
-            user_id : 1,
+            user_id: 1,
         },
         {
             id: 5,
@@ -97,8 +97,8 @@ const Chatting = () => {
             msg: 'Sounds perfect. I have to go through a few things, them I am ready.',
             time: 'Yesterday, 9:45 AM',
             img2: 'https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8OHx8fGVufDB8fHx8&w=1000&q=80',
-            user_id : 2,
- 
+            user_id: 2,
+
         },
 
     ]
@@ -121,10 +121,22 @@ const Chatting = () => {
         },
     ]
 
+    const socket = io("http://192.168.1.106:5000/")
+
+    useEffect(() => {
+        socket.on("connection", () => {
+
+        })
+        socket.on("get_user", (res) => {
+            console.log(res);
+        })
+        socket.emit("join_workspace", workspaceId)
+    }, [])
+    console.log(workspaceId);
 
 
     return !fontsLoaded ? <AppLoading /> : (
-        <View style={{...styles.Mainview,backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>
+        <View style={{ ...styles.Mainview, backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>
             <Header
                 // endHeading={'Edit Profile'}
                 headingStyle={{ fontSize: 20, color: 'black', fontFamily: 'Poppins_700Bold' }}
@@ -133,10 +145,10 @@ const Chatting = () => {
                 <View style={styles.ImageBgChild}>
 
                     <View style={styles.firstSection}>
-                        <Text style={[styles.newmessgaetext, { fontSize: 22 , backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor  }]}>Team Name</Text>
+                        <Text style={[styles.newmessgaetext, { fontSize: 22, backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }]}>Team Name</Text>
                         <TouchableOpacity style={styles.message}>
                             <Text style={styles.count}>{'6'}</Text>
-                            <Text style={{...styles.newmessgaetext,backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>Messages</Text>
+                            <Text style={{ ...styles.newmessgaetext, backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>Messages</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -158,13 +170,13 @@ const Chatting = () => {
                     </View>
                     {Activity.map((item, index) => {
                         return (
-                            <View  key={item.id}>
+                            <View key={item.id}>
                                 {item.time && <Text style={{ fontSize: 14, textAlign: 'center', fontFamily: 'Poppins_400Regular', marginTop: 20, color: colors.grey }}>{item.time}</Text>}
                                 <>
-                                    <View style={{ flexDirection: 'row' , justifyContent : item.user_id === 1 ? 'flex-end' : 'flex-start', alignItems: 'center', marginTop: 30 , marginRight : 10 }}>
-                                       {item.user_id !== 1 &&
-                                       <Image source={{ uri: item.img }} style={{ height: 50, width: 50, marginRight:  20, padding: 0 }} />
-                                       }  
+                                    <View style={{ flexDirection: 'row', justifyContent: item.user_id === 1 ? 'flex-end' : 'flex-start', alignItems: 'center', marginTop: 30, marginRight: 10 }}>
+                                        {item.user_id !== 1 &&
+                                            <Image source={{ uri: item.img }} style={{ height: 50, width: 50, marginRight: 20, padding: 0 }} />
+                                        }
                                         <Text style={{ maxWidth: '70%', fontSize: 16, fontFamily: 'Poppins_500Medium', backgroundColor: item.user_id === 1 ? colors.creamColor : 'white', padding: 8, paddingVertical: 10 }}>{item.msg}</Text>
                                     </View>
                                     {item.img2 &&
@@ -232,7 +244,7 @@ const Chatting = () => {
 export default Chatting;
 
 const styles = StyleSheet.create({
-    Mainview: { flex: 1,},
+    Mainview: { flex: 1, },
     LeaveBtn: { justifyContent: 'center', alignItems: 'center' },
     activity: { fontSize: 40, color: 'black', fontFamily: 'Poppins_700Bold', marginHorizontal: 15, marginTop: 45 },
     MainCard: { marginHorizontal: 10, flexDirection: 'row', alignItems: 'center', marginTop: 29 },

@@ -23,9 +23,10 @@ const AppNavigationContainer = () => {
       console.log("err");
     })
   }
-  useEffect(()=>{
+  useEffect(() => {
     getToken()
-    },[])
+    // AsyncStorage.removeItem('trello_token')
+  }, [])
   return (
     <NavigationContainer>
       {isAuthenticated !== false ? <LoggedIn /> : <AuthNavigator />}

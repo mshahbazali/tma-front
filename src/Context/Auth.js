@@ -15,6 +15,7 @@ export const AuthProvider = props => {
   const [currentTask, setCurrentTask] = useState("")
   const [taskId, setTaskId] = useState()
   const [darkMode, setDarkMode] = useState(false)
+  const [workspaceId, setWorkspaceId] = useState(false)
   const [customLightMode, setCustomLightMode] = useState({
     backgroundColor: "#fff",
     textColor: "black",
@@ -35,7 +36,7 @@ export const AuthProvider = props => {
 
 
 
-  const ipAddress = "https://tma-backend.herokuapp.com"
+  const ipAddress = "http://192.168.1.106:5000"
   return (
     <AuthContext.Provider
       value={{
@@ -57,7 +58,9 @@ export const AuthProvider = props => {
         darkMode,
         setDarkMode,
         customLightMode,
-        customDarkMode
+        customDarkMode,
+        workspaceId,
+        setWorkspaceId
       }}>
       {props.children}
     </AuthContext.Provider>

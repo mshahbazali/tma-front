@@ -50,22 +50,22 @@ const Card = (props) => {
         Poppins_900Black_Italic,
     });
 
-    const {darkMode , customDarkMode , customLightMode}  = useContext(AuthContext)
+    const { darkMode, customDarkMode, customLightMode, workspaceId, setWorkspaceId } = useContext(AuthContext)
 
     return !fontsLoaded ? <AppLoading /> : (
         <View style={styles.MainView}>
-
             <ImageBackground style={styles.ImageBg} source={{ uri: props.image }}>
                 <View style={styles.ImageBgChild}>
-
                     <View style={styles.firstSection}>
-                        <TouchableOpacity onPress={props.chatting} style={styles.message}>
-                            <Text style={styles.newmessgaetext}></Text>
+                        <TouchableOpacity onPress={() => {
+                            props.chatting
+                            setWorkspaceId(props.workspaceId)
+                        }} style={styles.message}>
+                            <Text style={styles.newmessgaetext}>New Message</Text>
                         </TouchableOpacity>
                         <View style={styles.totalUserView}>
-                            <Text style={{...styles.totalUser,color: darkMode ? customDarkMode.backgroundColor : customLightMode.textColor }}>{props.users}</Text>
+                            <Text style={{ ...styles.totalUser, color: darkMode ? customDarkMode.backgroundColor : customLightMode.textColor }}>{props.users}</Text>
                         </View>
-
                     </View>
                     <View style={styles.leavebtnView}>
                         <View style={styles.LeaveText}>
@@ -77,9 +77,7 @@ const Card = (props) => {
             </ImageBackground>
             <View>
                 <View style={styles.LeaveBtn}>
-
                     <YellowBtn onClick={props.onClick} title={props.title} />
-
                 </View>
 
                 <Text style={styles.text}>{props.text}</Text>
@@ -103,7 +101,8 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
         marginBottom: 10,
     },
-    ImageBg: { height: 200, 
+    ImageBg: {
+        height: 200,
     },
     ImageBgChild: { justifyContent: 'space-between', flex: 1 },
     firstSection: { flexDirection: 'row', justifyContent: 'space-between', margin: 10 },
@@ -117,7 +116,7 @@ const styles = StyleSheet.create({
     duedate: { fontSize: 12, fontFamily: 'Poppins_700Bold', borderRadius: 10, color: colors.yellow },
     LeaveBtn: { justifyContent: 'center', alignItems: 'center', marginTop: -25 },
     LeaveBtnChild: { paddingVertical: 10, paddingHorizontal: 20, borderRadius: 50, backgroundColor: colors.yellow, alignItems: 'center', justifyContent: 'center' },
-    LeaveText: { fontSize: 14, fontFamily: 'Poppins_700Bold', borderRadius: 10,  color:"black" },
+    LeaveText: { fontSize: 14, fontFamily: 'Poppins_700Bold', borderRadius: 10, color: "black" },
     text: { fontSize: 12, fontFamily: 'Poppins_400Regular', borderRadius: 10, color: colors.grey, marginTop: 14, marginHorizontal: 12 },
     iconView: { flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 15, marginTop: 26 },
 

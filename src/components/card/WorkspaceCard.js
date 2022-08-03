@@ -114,9 +114,7 @@ const WorkspaceCard = (props) => {
                         /> : null}
                     </View>
                 </View>
-
             </View>
-
         </TouchableOpacity>
     )
 }

@@ -31,8 +31,6 @@ import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../Context/Auth";
 import axios from "axios";
 
-
-
 const PostView = () => {
     let [fontsLoaded] = useFonts({
         Poppins_100Thin,

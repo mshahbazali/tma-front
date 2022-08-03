@@ -36,7 +36,7 @@ import axios from "axios"
 
 const FullList = (props) => {
     const navigation = useNavigation()
-    const { user, setCurrentWorkspace, ipAddress , customLightMode , customDarkMode , darkMode } = useContext(AuthContext)
+    const { user, setCurrentWorkspace, ipAddress, customLightMode, customDarkMode, darkMode } = useContext(AuthContext)
     const [myWorkSpace, setMyWorkSpace] = useState([])
     const [recentWorkspaces, setRecentWorkspaces] = useState([])
     const [search, setSearch] = useState("")
@@ -46,8 +46,8 @@ const FullList = (props) => {
     var form = {
         userId: user?._id
     }
-    const getWorkSpace =async () => {
-       user ? axios.post(ipAddress + '/workspace/myWorkspace/get', form)
+    const getWorkSpace = async () => {
+        user ? axios.post(ipAddress + '/workspace/myWorkspace/get', form)
             .then(function (response) {
                 setMyWorkSpace(response.data)
             })
@@ -57,13 +57,13 @@ const FullList = (props) => {
     }
 
     const getRecentWorkspace = () => {
-      user ?  axios.post(ipAddress + '/workspace/get/recent', form)
+        user ? axios.post(ipAddress + '/workspace/get/recent', form)
             .then(function (response) {
                 setRecentWorkspaces(response.data)
             })
             .catch(function (error) {
                 console.log("error");
-            }):null
+            }) : null
     }
 
     useEffect(() => {
@@ -82,8 +82,8 @@ const FullList = (props) => {
 
     const [allShow, setAllShow] = useState(true)
     useEffect(() => {
-       getWorkSpace()
-       getRecentWorkspace()
+        getWorkSpace()
+        getRecentWorkspace()
     }, [])
 
 
@@ -96,7 +96,7 @@ const FullList = (props) => {
             .then(function (response) {
                 getWorkSpace()
                 getRecentWorkspace()
-                console.log("response",response.data)
+                console.log("response", response.data)
             })
             .catch(function (error) {
                 console.log("error");
@@ -105,9 +105,9 @@ const FullList = (props) => {
     const leaveWorkspace = (workspaceId) => {
         const form = {
             userId: user._id,
-            workspaceId:workspaceId
+            workspaceId: workspaceId
         }
-        axios.post( ipAddress + '/workspace/leave', form)
+        axios.post(ipAddress + '/workspace/leave', form)
             .then(function (response) {
                 alert("Leaved Workspace")
                 getWorkSpace()
@@ -140,17 +140,17 @@ const FullList = (props) => {
     const [value, setValue] = useState('')
 
     return !fontsLoaded ? <ActivityIndicator /> : (
-        <ScrollView style={{backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>
+        <ScrollView style={{ backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>
 
             <View style={{ paddingBottom: 5 }}>
-                <View style={{...styles.MainView, backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>
+                <View style={{ ...styles.MainView, backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>
                     <View style={styles.Drawer}>
                         <TouchableOpacity onPress={() => navigation.openDrawer()}>
                             <Ionicons name="reorder-three" size={40} color={darkMode ? customDarkMode.textColor : customLightMode.textColor} />
                         </TouchableOpacity>
                         <View style={styles.iconView}>
 
-                            <Text style={{...styles.trello,color:darkMode ? customDarkMode.yellow : customLightMode.yellow}}>TMA</Text>
+                            <Text style={{ ...styles.trello, color: darkMode ? customDarkMode.yellow : customLightMode.yellow }}>TMA</Text>
                             <Octicons name="dot" size={20} style={styles.icon} color={colors.yellow} />
                         </View>
                     </View>
@@ -182,7 +182,7 @@ const FullList = (props) => {
                             }
                         }}
                         value={search}
-                        textStyle={{...styles.input,backgroundColor:darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor , color:darkMode ? customDarkMode.textColor : customLightMode.textColor}}
+                        textStyle={{ ...styles.input, backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor, color: darkMode ? customDarkMode.textColor : customLightMode.textColor }}
                     />
                 </TouchableOpacity>
             </View>
@@ -195,20 +195,20 @@ const FullList = (props) => {
                     <ScrollView horizontal={true}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', marginHorizontal: 15 }}>
 
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginLeft:-12 }}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginLeft: -12 }}>
                                 {recentWorkspaces ? recentWorkspaces.length === 0 ?
                                     <View style={{ alignItems: "center", width: "100%" }}>
-                                        <Text style={{color: darkMode ? customDarkMode.blue : customLightMode.blue, fontSize: 18, fontFamily: "Poppins_400Regular" }}>No Recent Workspace</Text></View>
+                                        <Text style={{ color: darkMode ? customDarkMode.blue : customLightMode.blue, fontSize: 18, fontFamily: "Poppins_400Regular" }}>No Recent Workspace</Text></View>
                                     : recentWorkspaces.map((item, index) => {
                                         return (
                                             <TouchableOpacity
-                                                style={{ borderWidth:1 , borderColor:customDarkMode.textColor ,  height: 200, width: 155, marginLeft:10}}
-                                            onPress={() => {
-                                                setAllShow(true)
-                                                navigation.navigate("viewworkspace")
-                                                setCurrentWorkspace(item)
-                                            }}>
-                                                <ImageBackground key={index} source={{ uri: item?.workSpaceImage ? item?.workSpaceImage : "https://www.incimages.com/uploaded_files/image/1920x1080/getty_517610514_353435.jpg" }} style={{ flex: 1, justifyContent: 'space-between'  }}>
+                                                style={{ borderWidth: 1, borderColor: customDarkMode.textColor, height: 200, width: 155, marginLeft: 10 }}
+                                                onPress={() => {
+                                                    setAllShow(true)
+                                                    navigation.navigate("viewworkspace")
+                                                    setCurrentWorkspace(item)
+                                                }}>
+                                                <ImageBackground key={index} source={{ uri: item?.workSpaceImage ? item?.workSpaceImage : "https://www.incimages.com/uploaded_files/image/1920x1080/getty_517610514_353435.jpg" }} style={{ flex: 1, justifyContent: 'space-between' }}>
                                                     <Text>.</Text>
                                                     <Text style={{ color: 'white', backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.textColor, fontFamily: 'Poppins_700Bold', marginRight: 20, textAlign: 'center', paddingVertical: 10 }}>{item?.workSpaceName}</Text>
 
@@ -231,7 +231,7 @@ const FullList = (props) => {
                             <Text style={{ color: darkMode ? customDarkMode.textColor : customLightMode.textColor, fontSize: 18, fontFamily: "Poppins_400Regular" }}>You have no workspace</Text></View> :
                         myWorkSpace.map((item, index) => {
                             var adminIdMatched = false
-                            if(item?.adminId === user._id){
+                            if (item?.adminId === user._id) {
                                 adminIdMatched = true
                             }
 
@@ -249,9 +249,10 @@ const FullList = (props) => {
                                         text={item?.about}
                                         title={adminIdMatched ? 'Delete' : "Leave"}
                                         onClick={() => {
-                                           adminIdMatched ? deleteWorkspace(item._id) : leaveWorkspace(item._id)
+                                            adminIdMatched ? deleteWorkspace(item._id) : leaveWorkspace(item._id)
                                         }}
-                                        chatting={() => navigation.navigate('chatting')}
+                                        chatting={navigation.navigate('chatting')}
+                                        workspaceId={item._id}
                                     />
                                 </TouchableOpacity>
                             )
@@ -263,10 +264,10 @@ const FullList = (props) => {
                         <Text style={{ color: darkMode ? customDarkMode.textColor : customLightMode.textColor, fontSize: 18, fontFamily: "Poppins_400Regular" }}>No Workspace Found with this name</Text></View> :
                         <View>
                             {filteredWorkspace?.map((item, index) => {
-                                  var adminIdMatched = false
-                                  if(item.adminId === user._id){
-                                      adminIdMatched = true
-                                  }
+                                var adminIdMatched = false
+                                if (item.adminId === user._id) {
+                                    adminIdMatched = true
+                                }
                                 return (
                                     <TouchableOpacity key={index} activeOpacity={0.9} onPress={() => {
                                         setSearch("")
@@ -283,7 +284,7 @@ const FullList = (props) => {
                                             title={'Delete'}
                                             onClick={() => {
                                                 adminIdMatched ? deleteWorkspace(item._id) : leaveWorkspace(item._id)
-                                             }}
+                                            }}
                                             chatting={() => navigation.navigate('chatting')}
                                         />
                                     </TouchableOpacity>
@@ -329,7 +330,7 @@ const styles = StyleSheet.create({
     Drawer: { flexDirection: 'row', alignItems: 'center' },
     trello: { fontSize: 29, fontFamily: 'Poppins_700Bold', },
     input: {
-        fontSize: 12, fontFamily: 'Poppins_500Medium',  marginTop: 5, marginHorizontal: 18, paddingVertical: 0, padding: 0,
+        fontSize: 12, fontFamily: 'Poppins_500Medium', marginTop: 5, marginHorizontal: 18, paddingVertical: 0, padding: 0,
         flexDirection: 'row',
         marginHorizontal: 15,
         paddingVertical: 10,
