@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { Text, View, StyleSheet, Image, ScrollView, ImageBackground, TouchableOpacity, FlatList, TextInput } from "react-native"
 import colors from "../constant/colors";
 import { AuthContext } from "../Context/Auth";
@@ -35,8 +35,8 @@ import LoginButton from "../components/button/LoginButton";
 import { useNavigation } from "@react-navigation/native";
 
 const Chatting = () => {
-
-    const { darkMode, customDarkMode, customLightMode, workspaceId } = useContext(AuthContext)
+    const ref = useRef()
+    const { darkMode, customDarkMode, customLightMode, workspaceId, user, ipAddress } = useContext(AuthContext)
 
     let [fontsLoaded] = useFonts({
         Poppins_100Thin,
@@ -60,10 +60,10 @@ const Chatting = () => {
     });
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [location, setLocation] = useState('')
+    const [scroll, setScroll] = useState(true)
+    const [messageData, setMessageData] = useState([])
     const [modalVisible, setModalVisible] = useState(false)
-
+    const [message, setMessage] = useState()
     const Activity = [
         {
             id: 1,
@@ -102,7 +102,6 @@ const Chatting = () => {
         },
 
     ]
-
     const documents = [
         {
             ServiceIcon: Entypo,
@@ -121,20 +120,27 @@ const Chatting = () => {
         },
     ]
 
-    const socket = io("http://192.168.1.106:5000/")
+    const socket = io(ipAddress + "/")
+    socket.emit("get-messages-history", workspaceId)
+    socket.on("output-messages", (res) => {
+        setMessageData(res);
+    })
+    const sendMessage = () => {
+        const data = {
+            user_name: user.username,
+            user_id: user._id,
+            workspace_id: workspaceId,
+            text: message
+        }
+        if (message == undefined) {
+            alert("Enter Message")
+        } else {
+            socket.emit("sendMessage", data)
+            socket.on("message", (res) => { })
+            setMessage(undefined)
 
-    useEffect(() => {
-        socket.on("connection", () => {
-
-        })
-        socket.on("get_user", (res) => {
-            console.log(res);
-        })
-        socket.emit("join_workspace", workspaceId)
-    }, [])
-    console.log(workspaceId);
-
-
+        }
+    }
     return !fontsLoaded ? <AppLoading /> : (
         <View style={{ ...styles.Mainview, backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>
             <Header
@@ -160,24 +166,24 @@ const Chatting = () => {
             }}>
 
                 {/* <View style={{ borderWidth: 1 }}> */}
-
-
-                <ScrollView>
+                <ScrollView ref={ref}
+                    onContentSizeChange={() => ref.current.scrollToEnd({ animated: true })}>
                     <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                         <View style={{ backgroundColor: colors.yellow, padding: 7, paddingBottom: 10, borderBottomLeftRadius: 10, borderBottomRightRadius: 10 }}>
                             <AntDesign name="caretdown" size={12} color={darkMode ? customDarkMode.textColor : customLightMode.textColor} />
                         </View>
                     </View>
-                    {Activity.map((item, index) => {
+                    {messageData.map((item, index) => {
                         return (
-                            <View key={item.id}>
+                            <View key={index}>
                                 {item.time && <Text style={{ fontSize: 14, textAlign: 'center', fontFamily: 'Poppins_400Regular', marginTop: 20, color: colors.grey }}>{item.time}</Text>}
                                 <>
-                                    <View style={{ flexDirection: 'row', justifyContent: item.user_id === 1 ? 'flex-end' : 'flex-start', alignItems: 'center', marginTop: 30, marginRight: 10 }}>
-                                        {item.user_id !== 1 &&
-                                            <Image source={{ uri: item.img }} style={{ height: 50, width: 50, marginRight: 20, padding: 0 }} />
+                                    <View style={{ flexDirection: 'row', justifyContent: item.user_id == user._id ? 'flex-end' : 'flex-start', alignItems: 'center', marginTop: 30, marginRight: 10 }}>
+                                        {
+                                            item.user_id !== user._id ?
+                                                <Text style={{ maxWidth: '70%', fontSize: 16, fontFamily: 'Poppins_500Medium', padding: 8, paddingVertical: 10, color: "black" }}>{item.user_name}</Text> : null
                                         }
-                                        <Text style={{ maxWidth: '70%', fontSize: 16, fontFamily: 'Poppins_500Medium', backgroundColor: item.user_id === 1 ? colors.creamColor : 'white', padding: 8, paddingVertical: 10 }}>{item.msg}</Text>
+                                        <Text style={{ maxWidth: '70%', fontSize: 16, fontFamily: 'Poppins_500Medium', backgroundColor: item.user_id == user._id ? colors.creamColor : 'white', padding: 8, paddingVertical: 10, }}>{item.text}</Text>
                                     </View>
                                     {item.img2 &&
                                         <View style={{ marginBottom: 10 }}>
@@ -223,10 +229,10 @@ const Chatting = () => {
                     }
 
                     <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 5, }}>
-                        <TouchableOpacity onPress={() => alert('send message...')}>
+                        <TouchableOpacity onPress={sendMessage}>
                             <FontAwesome name="send" size={18} color={colors.blue} style={{ paddingHorizontal: 5 }} />
                         </TouchableOpacity>
-                        <TextInput placeholder="Write a message" placeholderTextColor={colors.grey} style={{ fontFamily: 'Poppins_500Medium', color: darkMode ? customDarkMode.textColor : customLightMode.textColor, fontSize: 14, width: '70%', padding: 10 }} />
+                        <TextInput value={message} placeholder="Write a message" placeholderTextColor={colors.grey} style={{ fontFamily: 'Poppins_500Medium', color: darkMode ? customDarkMode.textColor : customLightMode.textColor, fontSize: 14, width: '70%', padding: 10 }} onChangeText={(text) => setMessage(text)} />
                         <TouchableOpacity onPress={() => setModalVisible(true)} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '22%', paddingHorizontal: 5 }}>
                             <AntDesign name="plus" size={25} style={{ marginLeft: 5 }} color={darkMode ? customDarkMode.textColor : customLightMode.textColor} />
                             <Entypo name="attachment" size={20} style={{ paddingRight: 5 }} color={darkMode ? customDarkMode.textColor : customLightMode.textColor} />

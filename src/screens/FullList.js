@@ -36,7 +36,7 @@ import axios from "axios"
 
 const FullList = (props) => {
     const navigation = useNavigation()
-    const { user, setCurrentWorkspace, ipAddress, customLightMode, customDarkMode, darkMode } = useContext(AuthContext)
+    const { user, setCurrentWorkspace, ipAddress, customLightMode, customDarkMode, darkMode, setWorkspaceId } = useContext(AuthContext)
     const [myWorkSpace, setMyWorkSpace] = useState([])
     const [recentWorkspaces, setRecentWorkspaces] = useState([])
     const [search, setSearch] = useState("")
@@ -52,7 +52,6 @@ const FullList = (props) => {
                 setMyWorkSpace(response.data)
             })
             .catch(function (error) {
-                console.log(error);
             }) : null
     }
 
@@ -62,7 +61,6 @@ const FullList = (props) => {
                 setRecentWorkspaces(response.data)
             })
             .catch(function (error) {
-                console.log("error");
             }) : null
     }
 
@@ -96,10 +94,8 @@ const FullList = (props) => {
             .then(function (response) {
                 getWorkSpace()
                 getRecentWorkspace()
-                console.log("response", response.data)
             })
             .catch(function (error) {
-                console.log("error");
             });
     }
     const leaveWorkspace = (workspaceId) => {
@@ -114,7 +110,6 @@ const FullList = (props) => {
                 getRecentWorkspace()
             })
             .catch(function (error) {
-                console.log("error");
             });
     }
     let [fontsLoaded] = useFonts({
@@ -251,8 +246,10 @@ const FullList = (props) => {
                                         onClick={() => {
                                             adminIdMatched ? deleteWorkspace(item._id) : leaveWorkspace(item._id)
                                         }}
-                                        chatting={navigation.navigate('chatting')}
-                                        workspaceId={item._id}
+                                        chatting={() => {
+                                            navigation.navigate('chatting')
+                                            setWorkspaceId(item._id)
+                                        }}
                                     />
                                 </TouchableOpacity>
                             )
@@ -285,7 +282,10 @@ const FullList = (props) => {
                                             onClick={() => {
                                                 adminIdMatched ? deleteWorkspace(item._id) : leaveWorkspace(item._id)
                                             }}
-                                            chatting={() => navigation.navigate('chatting')}
+                                            chatting={() => {
+                                                navigation.navigate('chatting')
+                                                setWorkspaceId(item._id)
+                                            }}
                                         />
                                     </TouchableOpacity>
                                 )

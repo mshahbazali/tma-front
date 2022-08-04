@@ -2,9 +2,8 @@
 import React, { useContext, useState } from "react";
 import { View, Text, TouchableOpacity, TextInput, ImageBackground, StyleSheet, ScrollView, Image } from "react-native";
 import { Ionicons, AntDesign, FontAwesome, Feather, Entypo, MaterialIcons } from '@expo/vector-icons';
-
 import AppLoading from "expo-app-loading";
-
+import { io } from "socket.io-client";
 import {
   useFonts,
   Poppins_100Thin,
@@ -67,43 +66,41 @@ const CreateWorkspace = (props) => {
   const [mughees, setMughees] = useState()
   const [visible, setVisible] = useState(false);
   const navigation = useNavigation()
-  const {user , ipAddress , darkMode , customDarkMode , customLightMode } = useContext(AuthContext)
-
-
-  var validUsername = (val) => {
-    const usernameRegex = /^[a-zA-Z\-]+$/;
-    return usernameRegex.test(val)
-  }
+  const { user, ipAddress, darkMode, customDarkMode, customLightMode } = useContext(AuthContext)
 
   const Delete = id => {
     setWorkspaceImg("")
   }
-
-  const create = ()=>{
-   if(workspacename === undefined || workspacename.length == 0){
-    alert("Please Enter workspace name")
-   }else{
-    const form = {
-      adminEmail: user.email,
-      workSpaceName: workspacename,
-      about: workspaceabout,
-      workSpaceImage: workspaceImg,
-  }
-  axios.post(ipAddress+'/create-workspace', form)
-      .then(function (response) {
+  const socket = io(ipAddress + "/")
+  const create = () => {
+    if (workspacename === undefined || workspacename.length == 0) {
+      alert("Please Enter workspace name")
+    } else {
+      const form = {
+        adminEmail: user.email,
+        workSpaceName: workspacename,
+        about: workspaceabout,
+        workSpaceImage: workspaceImg,
+      }
+      axios.post(ipAddress + '/create-workspace', form)
+        .then(async (response) => {
           if (response.status == 202) {
-              alert(`The workspace named ${workspacename} already exist`)
+            alert(`The workspace named ${workspacename} already exist`)
           } else {
-              setWorkspacename("")
-              setWorkspaceabout("")
-              setWorkspaceImg("")
-              navigation.navigate('selectphoto')
+            setWorkspacename("")
+            setWorkspaceabout("")
+            setWorkspaceImg("")
+            await socket.emit("create-workspace", { workspace_id: response.data._id, user_id: response.data.adminId, user_name: user.username, workspace_name: response.data.workSpaceName, workspace_users: response.data.users })
+            await navigation.navigate('selectphoto')
+            await socket.on("created", (res) => {
+              console.log(res);
+            })
           }
-      })
-      .catch(function (error) {
+        })
+        .catch(function (error) {
           console.log(error);
-      });
-   }
+        });
+    }
   }
 
 
@@ -189,35 +186,35 @@ const CreateWorkspace = (props) => {
   };
   return !fontsLoaded ? <AppLoading /> : (
 
-    <ScrollView style={{...styles.Mainview,backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>
+    <ScrollView style={{ ...styles.Mainview, backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>
       <Header endHeading="Create Workspace" headingStyle={{ fontSize: 20, color: darkMode ? customDarkMode.textColor : customLightMode.textColor, fontFamily: 'Poppins_700Bold' }} />
 
       <View style={{ paddingBottom: 2 }}>
-        <Text style={{...styles.activity,color:darkMode ? customDarkMode.textColor : customLightMode.textColor}} >Add Workspace Name</Text>
+        <Text style={{ ...styles.activity, color: darkMode ? customDarkMode.textColor : customLightMode.textColor }} >Add Workspace Name</Text>
         <View style={{}}>
           <Inputfield
             placeholderTextColor={'gray'}
             placeholder="TEAM 1 - PERSONAL"
             onChange={(e) => setWorkspacename(e)}
             value={workspacename}
-            textStyle={{...styles.input,color:darkMode ? customDarkMode.textColor : customLightMode.textColor , backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}
+            textStyle={{ ...styles.input, color: darkMode ? customDarkMode.textColor : customLightMode.textColor, backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}
 
           />
         </View>
       </View>
 
       <View style={{ paddingBottom: 5 }}>
-        <Text style={{...styles.activity,color:darkMode ? customDarkMode.textColor : customLightMode.textColor ,}} >Add Workspace 'About' Information</Text>
+        <Text style={{ ...styles.activity, color: darkMode ? customDarkMode.textColor : customLightMode.textColor, }} >Add Workspace 'About' Information</Text>
         <View style={{}}>
           <Inputfield
             placeholderTextColor={'gray'}
             placeholder="e.g : This is workspace for our company to share task for our new brands"
-            textStyle={{...styles.input,color:darkMode ? customDarkMode.textColor : customLightMode.textColor,height:150 , backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}
+            textStyle={{ ...styles.input, color: darkMode ? customDarkMode.textColor : customLightMode.textColor, height: 150, backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}
             numberOfLines={20}
             textAlignVertical={'top'}
             multiline={true}
             value={workspaceabout}
-            onChange={(e)=> setWorkspaceabout(e)}
+            onChange={(e) => setWorkspaceabout(e)}
           />
         </View>
       </View>
@@ -240,7 +237,7 @@ const CreateWorkspace = (props) => {
               marginVertical: 20,
               borderWidth: 1, borderRadius: 5, padding: 10,
               borderStyle: 'dotted',
-              borderColor:darkMode ? customDarkMode.textColor : customLightMode.textColor
+              borderColor: darkMode ? customDarkMode.textColor : customLightMode.textColor
             }}>
             <MaterialIcons name="photo-camera" size={70} color={darkMode ? customDarkMode.textColor : customLightMode.textColor} />
           </TouchableOpacity>
@@ -248,7 +245,7 @@ const CreateWorkspace = (props) => {
           <View
             style={{
               alignItems: 'center',
-              marginVertical: 20, 
+              marginVertical: 20,
               borderRadius: 5,
               padding: 10,
             }}>
@@ -277,9 +274,9 @@ const CreateWorkspace = (props) => {
                 <Entypo
                   style={{
                     position: 'absolute',
-                    right:-8,
+                    right: -8,
                     top: -8,
-                    backgroundColor:darkMode ? customDarkMode.textColor : customLightMode.textColor,
+                    backgroundColor: darkMode ? customDarkMode.textColor : customLightMode.textColor,
                     borderRadius: 100,
                   }}
                   name="circle-with-cross"
@@ -320,7 +317,7 @@ const styles = StyleSheet.create({
   Mainview: { flex: 1 },
   DoneBtn: { backgroundColor: colors.blue, marginHorizontal: 37, padding: 10, borderRadius: 100, height: 80, width: 80, alignItems: 'center', justifyContent: 'center' },
   DoneBtntext: { color: 'white', fontFamily: 'Poppins_500Medium', textAlign: 'center' },
-  activity: { fontSize: 14,  fontFamily: 'Poppins_700Bold', marginHorizontal: 15, marginTop: 45 },
+  activity: { fontSize: 14, fontFamily: 'Poppins_700Bold', marginHorizontal: 15, marginTop: 45 },
   input: {
     fontSize: 12, fontFamily: 'Poppins_500Medium', marginTop: 5, marginHorizontal: 18, paddingVertical: 0, padding: 0,
     flexDirection: 'row',

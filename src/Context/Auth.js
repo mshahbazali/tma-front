@@ -36,7 +36,7 @@ export const AuthProvider = props => {
 
 
 
-  const ipAddress = "http://192.168.1.106:5000"
+  const ipAddress = "http://192.168.0.110:5000"
   return (
     <AuthContext.Provider
       value={{

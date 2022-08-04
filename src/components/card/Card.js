@@ -57,10 +57,7 @@ const Card = (props) => {
             <ImageBackground style={styles.ImageBg} source={{ uri: props.image }}>
                 <View style={styles.ImageBgChild}>
                     <View style={styles.firstSection}>
-                        <TouchableOpacity onPress={() => {
-                            props.chatting
-                            setWorkspaceId(props.workspaceId)
-                        }} style={styles.message}>
+                        <TouchableOpacity onPress={props.chatting} style={styles.message}>
                             <Text style={styles.newmessgaetext}>New Message</Text>
                         </TouchableOpacity>
                         <View style={styles.totalUserView}>

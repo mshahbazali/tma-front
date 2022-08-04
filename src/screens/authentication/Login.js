@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Text, View, StyleSheet } from "react-native"
+import { Text, View, StyleSheet, ScrollView } from "react-native"
 import colors from "../../constant/colors";
 import {
     useFonts,
@@ -29,7 +29,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../Context/Auth";
 
 const Login = () => {
-    const {setIsAuthenticated , isAuthenticated , darkMode , customDarkMode , customLightMode} = useContext(AuthContext)
+    const { setIsAuthenticated, isAuthenticated, darkMode, customDarkMode, customLightMode } = useContext(AuthContext)
 
     let [fontsLoaded] = useFonts({
         Poppins_100Thin,
@@ -54,14 +54,16 @@ const Login = () => {
 
     const navigation = useNavigation()
     return !fontsLoaded ? <AppLoading /> : (
-        <View style={{...styles.Mainview,backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>
-            <View style={styles.TrelloView}>
-                <Text style={styles.trelloTitle}>trello</Text>
-                <Entypo style={styles.circleIcon} name="circle" size={10} color={colors.blue} />
-            </View>
-            <Text style={styles.trelloDes}>A new way to engage your team online.</Text>
-            <LoginButton onPress={() => navigation.navigate('signupform')} title={'Sign up'} textStyle={styles.SignUpButtonText} style={styles.SignUpButton} />
-            <LoginButton onPress={() => navigation.navigate('loginform')} title={'Log in'} textStyle={styles.LoginButtonText} style={styles.LoginButton} />
+        <View style={{ ...styles.Mainview, backgroundColor: darkMode ? customDarkMode.backgroundColor : customLightMode.backgroundColor }}>
+            <ScrollView>
+                <View style={styles.TrelloView}>
+                    <Text style={styles.trelloTitle}>trello</Text>
+                    <Entypo style={styles.circleIcon} name="circle" size={10} color={colors.blue} />
+                </View>
+                <Text style={styles.trelloDes}>A new way to engage your team online.</Text>
+                <LoginButton onPress={() => navigation.navigate('signupform')} title={'Sign up'} textStyle={styles.SignUpButtonText} style={styles.SignUpButton} />
+                <LoginButton onPress={() => navigation.navigate('loginform')} title={'Log in'} textStyle={styles.LoginButtonText} style={styles.LoginButton} />
+            </ScrollView>
         </View>
     )
 }
