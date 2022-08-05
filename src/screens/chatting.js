@@ -1,5 +1,5 @@
 import React, { useState, useContext, useRef } from "react";
-import { Text, View, StyleSheet, Image, ScrollView, ImageBackground, TouchableOpacity, FlatList, TextInput } from "react-native"
+import { Text, View, StyleSheet,  ScrollView, ImageBackground, TouchableOpacity, FlatList, TextInput } from "react-native"
 import colors from "../constant/colors";
 import { AuthContext } from "../Context/Auth";
 import { io } from "socket.io-client";
@@ -24,15 +24,11 @@ import {
     Poppins_900Black,
     Poppins_900Black_Italic,
 } from '@expo-google-fonts/poppins';
-import { Entypo, MaterialIcons, FontAwesome5, Foundation, Ionicons, AntDesign, FontAwesome } from '@expo/vector-icons';
+import { Entypo, Foundation, AntDesign, FontAwesome } from '@expo/vector-icons';
 import AppLoading from "expo-app-loading";
 import Header from "../components/header/Header";
-import YellowBtn from "../components/button/YellowBtn";
+
 import { url } from "../constant/url";
-import EditProfileInput from "../components/TextInput/EditProfileInput";
-import Inputfield from "../components/TextInput/TextInput";
-import LoginButton from "../components/button/LoginButton";
-import { useNavigation } from "@react-navigation/native";
 
 const Chatting = () => {
     const ref = useRef()
@@ -58,50 +54,9 @@ const Chatting = () => {
         Poppins_900Black,
         Poppins_900Black_Italic,
     });
-    const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
-    const [scroll, setScroll] = useState(true)
     const [messageData, setMessageData] = useState([])
     const [modalVisible, setModalVisible] = useState(false)
     const [message, setMessage] = useState()
-    const Activity = [
-        {
-            id: 1,
-            img: 'https://t4.ftcdn.net/jpg/02/45/28/17/360_F_245281721_2uYVgLSFnaH9AlZ1WWpkZavIcEEGBU84.jpg',
-            msg: 'Hey when`s the next meeting',
-            time: 'Yesterday, 9:45 AM',
-            user_id: 1,
-        },
-        {
-            id: 2,
-            img: 'https://thumbs.dreamstime.com/b/businessman-icon-image-male-avatar-profile-vector-glasses-beard-hairstyle-179728610.jpg',
-            msg: 'Wednesday, next okay',
-            user_id: 2,
-
-        },
-        {
-            id: 3,
-            img: 'https://t4.ftcdn.net/jpg/02/45/28/17/360_F_245281721_2uYVgLSFnaH9AlZ1WWpkZavIcEEGBU84.jpg',
-            msg: 'Sounds perfect. I have to go through a few things, them I am ready.',
-            user_id: 2,
-        },
-        {
-            id: 4,
-            img: 'https://t4.ftcdn.net/jpg/02/45/28/17/360_F_245281721_2uYVgLSFnaH9AlZ1WWpkZavIcEEGBU84.jpg',
-            msg: 'Sounds perfect. I have to go through a few things, them I am ready.',
-            user_id: 1,
-        },
-        {
-            id: 5,
-            img: 'https://t4.ftcdn.net/jpg/02/45/28/17/360_F_245281721_2uYVgLSFnaH9AlZ1WWpkZavIcEEGBU84.jpg',
-            msg: 'Sounds perfect. I have to go through a few things, them I am ready.',
-            time: 'Yesterday, 9:45 AM',
-            img2: 'https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8OHx8fGVufDB8fHx8&w=1000&q=80',
-            user_id: 2,
-
-        },
-
-    ]
     const documents = [
         {
             ServiceIcon: Entypo,
@@ -133,7 +88,6 @@ const Chatting = () => {
             text: message
         }
         if (message == undefined) {
-            alert("Enter Message")
         } else {
             socket.emit("sendMessage", data)
             socket.on("message", (res) => { })

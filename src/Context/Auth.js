@@ -36,7 +36,7 @@ export const AuthProvider = props => {
 
 
 
-  const ipAddress = "http://192.168.0.110:5000"
+  const ipAddress = "https://tma-backend.herokuapp.com"
   return (
     <AuthContext.Provider
       value={{
